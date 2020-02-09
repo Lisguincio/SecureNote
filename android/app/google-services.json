@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "753911520506",
+    "firebase_url": "https://note-1a23f.firebaseio.com",
+    "project_id": "note-1a23f",
+    "storage_bucket": "note-1a23f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753911520506:android:6b6853446a784c3b19bd43",
+        "android_client_info": {
+          "package_name": "com.example.securenote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753911520506-lvlo8208i4e9bs6eqv0u0pr36r881ju2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVkS2GK9KoBjSestoaIQOEUK9RYMiFboQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753911520506-lvlo8208i4e9bs6eqv0u0pr36r881ju2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
