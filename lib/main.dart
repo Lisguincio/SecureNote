@@ -77,13 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       IconButton(
                         icon: Icon(Icons.add),
                         onPressed: () {
-                          newNote().then((note) {
-                            print("Modifico la nota appena creata");
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => Editor(note)));
-                          });
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => Editor(Note())));
                         },
                         iconSize: 30,
                       ),
@@ -109,7 +106,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Note> newNote() async {
-    var note = new Note(title: "", body: "", id: "", isLocked: true, color: Colors.yellow.shade700);
+    var note = new Note(
+        title: "",
+        body: "",
+        id: "",
+        isLocked: true,
+        color: Colors.yellow.shade700);
     print("Creo una nuova nota!");
     await Firestore.instance
         .collection("utenti")

@@ -21,6 +21,7 @@ class _EditorState extends State<Editor> {
   ZefyrController _controller;
   TextEditingController _title;
   bool isEditing = false;
+  bool isNew = false;
 
   /// Zefyr editor like any other input field requires a focus node.
   FocusNode _focusNode;
@@ -29,18 +30,20 @@ class _EditorState extends State<Editor> {
   void initState() {
     super.initState();
 
+    if(widget.note.id == ""){
+      isNew = true;
+    }
+
     _title =
         new TextEditingController(); //Inizializzo il nuovo TextEditingController per il titolo
+    
     NotusDocument document; //Inizializzo il nuovo documento
 
-    //print("Testo vuoto: " + widget.note.toString().isEmpty.toString());
-
-    if (widget.note.body.contains("["))
-      document = _loadDocument();
-    else
-      document = new NotusDocument();
-
+    
+    document = _loadDocument();
+    
     _controller = ZefyrController(document);
+
     _controller.addListener(() {
       if (isEditing == false) {
         isEditing = true;
@@ -146,6 +149,24 @@ class _EditorState extends State<Editor> {
     );
   }
 
+  void newNote() {
+    try {
+      Firestore.instance
+        .collection("utenti")
+        .document(mainUser.email)
+        .collection("note")
+        .add({
+      'title': _title.text,
+      'body': jsonEncode(_controller.document),
+      'locked': widget.note.isLocked,
+      'color': widget.note.color.value.toString()
+    });
+    } catch (e) {
+      Toast.show(e.message, context,duration: 2);
+    }
+    
+  }
+
   void _saveDocument(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode()); //Chiude la tastiera
     final contents =
@@ -168,9 +189,9 @@ class _EditorState extends State<Editor> {
     }
   }
 
-  /// Loads the document to be edited in Zefyr.
   NotusDocument _loadDocument() {
     _title = new TextEditingController(text: widget.note.title);
+    if(widget.note.body == null) return NotusDocument();
     List data = json.decode(widget.note.body);
     return NotusDocument.fromJson(data);
   }
@@ -180,7 +201,9 @@ class _EditorState extends State<Editor> {
       if (_title.text.isEmpty)
         throw Exception("Il titolo non può essere vuoto");
 
-      if (isEditing) _saveDocument(context);
+      if (isNew) newNote();
+      else
+        if (isEditing) _saveDocument(context);
 
       Navigator.pop(context);
     } catch (e) {

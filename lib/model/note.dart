@@ -6,9 +6,11 @@ class Note{
   String title = "";
   String body = "";
   Color color = Colors.yellow.shade700;
-  bool isLocked = false;
+  bool isLocked;
 
-  Note({this.id, this.title,this.body, this.isLocked, this.color});
+  
+
+  Note({this.id, this.title,this.body, this.isLocked = false, this.color = const Color(4294688813)});
 }
 
 List<Note> notes = new List();
