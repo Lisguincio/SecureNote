@@ -6,11 +6,12 @@ import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 
 import 'package:securenote/view/editor.dart';
-import 'package:securenote/login.dart';
 import 'package:securenote/model/note.dart';
 import 'package:securenote/theme.dart';
-import 'package:securenote/tile.dart';
+import 'package:securenote/model/tile.dart';
+import 'package:securenote/view/settings.dart';
 import 'package:securenote/view/splash.dart';
+import 'package:toast/toast.dart';
 
 void main() => runApp(MyApp());
 
@@ -55,19 +56,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: <Widget>[
                       IconButton(
                           icon: Icon(Icons.settings),
-                          onPressed: () {
-                            print("User " + widget.user.email + " LOGOUT!");
-                            logout(); //Effettuo il logout
-                            notes.clear(); //Rimuovo le note caricate!
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Login()));
+                          onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context)=>Settings()));
                           }),
                       Expanded(
                         child: SizedBox(),
                       ),
-                      AppTitle(),
+                      AppTitle("Secure","Note"),
                       Expanded(child: SizedBox()),
                       IconButton(
                         icon: Icon(Icons.refresh),
@@ -129,17 +123,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void readDocs() {
-    notes.clear();
     print("READ_DOCS");
     List<DocumentSnapshot> snap = new List();
     Firestore.instance
         .collection("utenti")
         .document(mainUser.email)
         .collection("note")
-        .getDocuments()
+        .getDocuments().timeout(Duration(seconds: 30), onTimeout: (){Toast.show("Richiesta TimeOut",context,duration: 2); return null;})
         .then((s) {
       snap = s.documents;
-      //notes.clear();
+      notes.clear();
       for (DocumentSnapshot doc in snap) {
         Note temp = new Note(
             id: doc.documentID,
@@ -153,9 +146,5 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     });
-  }
-
-  void logout() {
-    FirebaseAuth.instance.signOut();
   }
 }

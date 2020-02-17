@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AppTitle extends StatelessWidget {
+
+  final String first;
+  final String second;
+
+  AppTitle(this.first, this.second);
+
   @override
   Widget build(BuildContext context) {
     return RichText(
@@ -8,8 +14,8 @@ class AppTitle extends StatelessWidget {
           style: TextStyle(color: Colors.black, fontSize: 30),
           children: [
             TextSpan(
-                text: "Secure", style: TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: "Note"),
+                text: first, style: TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: second),
           ]),
     );
   }

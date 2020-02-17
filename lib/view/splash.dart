@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:securenote/login.dart';
+import 'package:securenote/view/login.dart';
 import 'package:securenote/main.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
@@ -47,7 +47,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       backgroundColor: whitetheme.accentColor,
       body: Center(
-          child: AppTitle()
+          child: AppTitle("Secure","Note")
         ),
     );
   }

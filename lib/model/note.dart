@@ -5,7 +5,7 @@ class Note{
   String id = "";
   String title = "";
   String body = "";
-  Color color = Colors.yellow.shade700;
+  Color color;
   bool isLocked;
 
   

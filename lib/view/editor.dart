@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:securenote/model/note.dart';
+import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 import 'package:securenote/theme.dart';
 import 'package:toast/toast.dart';
@@ -80,16 +81,7 @@ class _EditorState extends State<Editor> {
                             Icons.color_lens,
                           ),
                           onPressed: showColorPicker),
-                      RichText(
-                        text: TextSpan(
-                            style: TextStyle(color: Colors.black, fontSize: 30),
-                            children: [
-                              TextSpan(
-                                  text: "Editor",
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: "Note"),
-                            ]),
-                      ),
+                      AppTitle("New", "Note"),
                       Expanded(child: SizedBox()),
                       IconButton(
                         icon: widget.note.isLocked
@@ -258,8 +250,7 @@ class _EditorState extends State<Editor> {
         content: Text("Sicuro di voler tornare indietro? I cambiamenti effettuati non verrano salvati!"),
         actions: <Widget>[
           FlatButton(onPressed: ()=>Navigator.pop(context, false), child: Text("No, Grazie")),
-          FlatButton(onPressed: ()async{
-            //await Firestore.instance.collection("utenti").document(mainUser.email).collection("note").document(widget.note.id).delete();
+          FlatButton(onPressed: (){
             Navigator.pop(context, true);
           }, child: Text("Esci")),
         ],
