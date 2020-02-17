@@ -129,7 +129,8 @@ class _MyHomePageState extends State<MyHomePage> {
         .collection("utenti")
         .document(mainUser.email)
         .collection("note")
-        .getDocuments().timeout(Duration(seconds: 30), onTimeout: (){Toast.show("Richiesta TimeOut",context,duration: 2); return null;})
+        .getDocuments()
+        .timeout(Duration(seconds: 30), onTimeout: (){Toast.show("Richiesta TimeOut",context,duration: 2); return null;})
         .then((s) {
       snap = s.documents;
       notes.clear();

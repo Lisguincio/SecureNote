@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:securenote/auth.dart';
 import 'package:securenote/model/note.dart';
 import 'package:securenote/view/editor.dart';
+
+import 'package:local_auth/local_auth.dart';
 
 
 
@@ -18,6 +21,8 @@ class Tiles extends StatefulWidget {
 }
 
 class _TilesState extends State<Tiles> {
+
+  LocalAuthentication localauth = LocalAuthentication();
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +42,29 @@ class _TilesState extends State<Tiles> {
             ]
           ),
           child: ListTile(
-            leading: IconButton(icon: Icon(Icons.brightness_1), color: widget.note.color, iconSize: 40, onPressed: (){}),
+            leading: Icon(Icons.brightness_1, color: widget.note.color, size: 45),
             title: Text(widget.note.title, style: TextStyle(fontWeight: FontWeight.bold),),
             trailing: widget.note.isLocked ? Icon(Icons.lock_outline) : Icon(Icons.lock_open),
-            onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note))),
+            onTap: ()async{
+              if(widget.note.isLocked){
+                if(LocalAuthenticationService.btype.isNotEmpty)
+                  auth.authenticate().then((b){
+                    if(b)
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));
+                    });
+                
+                //else PIN/PATTERN
+                  
+
+
+              }
+              else
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));
+            }
+            
+            
+            
+            
           )
         ),
       );

@@ -25,6 +25,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   toast:
   flutter_material_color_picker:
+  local_auth: ^0.4.0+1
+
 
   firebase_auth:
   cloud_firestore:

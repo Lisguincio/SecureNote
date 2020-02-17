@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:securenote/auth.dart';
 import 'package:securenote/view/login.dart';
 import 'package:securenote/main.dart';
 import 'package:securenote/model/title.dart';
@@ -15,30 +15,24 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+
+  
+
   @override
   initState() {
-    FirebaseAuth.instance
-        .currentUser()
-        .then((currentUser){
-              if (currentUser == null)
-                {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));}
-              else
-                {
-                  mainUser = currentUser;
-                  Firestore.instance
-                      .collection("utenti")
-                      .document(currentUser.email)
-                      .get()
-                      .then((DocumentSnapshot result) =>
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyHomePage(
-                                        ))))
-                      .catchError((err) => print(err));
-                }
-            })
-        .catchError((err) => print(err));
+    auth.loadtypes();
+
+    FirebaseAuth.instance.currentUser().then((currentUser) {
+      if (currentUser == null) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Login()));
+      } else {
+        mainUser = currentUser;
+        Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => MyHomePage()))
+            .catchError((err) => print(err));
+      }
+    }).catchError((err) => print(err));
     super.initState();
   }
 
@@ -46,9 +40,7 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whitetheme.accentColor,
-      body: Center(
-          child: AppTitle("Secure","Note")
-        ),
+      body: Center(child: AppTitle("Secure", "Note")),
     );
   }
 }
