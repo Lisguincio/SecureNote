@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
@@ -16,6 +18,8 @@ class _LoginState extends State<Login> {
   TextEditingController _pass = new TextEditingController();
   TextEditingController _email = new TextEditingController();
 
+  bool _obscure = false; //Variabile per il toggle del visualizza password
+
   bool login = false; //Variabile per evitare che il doppio TAP su Login effettui due volte il login
 
   final _formKey = GlobalKey<FormState>();
@@ -26,6 +30,108 @@ class _LoginState extends State<Login> {
         backgroundColor: whitetheme.accentColor,
         body: SafeArea(
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(child: Center(child: AppTitle("Secure","Note"))),
+        Expanded(flex: 2, child: 
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(top:Radius.circular(50)),
+              color: whitetheme.backgroundColor,
+            ),
+            padding: EdgeInsets.fromLTRB(40,20,40,20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+
+                  
+                  //Email
+                  Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      controller: _email,
+                      style: TextStyle(
+                        fontSize: 20,
+                        //fontWeight: FontWeight.w100
+                      ),
+                      decoration: InputDecoration(
+                        hintText: "Email",
+                        border: UnderlineInputBorder(),
+                      ),
+                      validator: (string){
+                        if(!string.contains("@")) return "Check your Email";
+                        return null;
+                      },
+                    ),
+                  ),
+
+                  //Password
+                  Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: !_obscure,
+                      controller: _pass,
+                      style: TextStyle(
+                        fontSize: 20,
+                        //fontWeight: FontWeight.w100
+                      ),
+                      decoration: InputDecoration(
+                        hintText: "Password",
+                        suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: ()=>setState((){_obscure = !_obscure;})),
+                        border: UnderlineInputBorder(),
+                      ),
+                      validator: (string){
+                        if(string.length < 8) return "Check your Password";
+                        return null;
+                      },
+                    ),
+                  ),
+                  
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(child: Text("Entra", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40), textAlign: TextAlign.center,)),
+                        FloatingActionButton(
+                          backgroundColor: whitetheme.accentColor,
+                          child: Icon(Icons.arrow_forward, size: 40, color: Colors.black,),
+                          onPressed: (){
+                            if(!login && _formKey.currentState.validate()){
+                              autenticate(_email.text, _pass.text, context);
+                              login = true;
+                            }
+                          }
+                        ),
+                      ]
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      GestureDetector(
+                        child: Text("Registrati", style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.bold, fontSize: 18)),
+                        onTap: null,
+                      ),
+                      GestureDetector(
+                        child: Text("Password\nDimenticata", style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.end),
+                        onTap: null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          )
+        ),
+      ],
+    ) 
+    
+    /*Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(40),
@@ -121,7 +227,7 @@ class _LoginState extends State<Login> {
           ),
         )
       ]
-      )
+      )*/
         ),
       );
   }

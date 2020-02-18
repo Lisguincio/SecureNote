@@ -10,7 +10,7 @@ class Note{
 
   
 
-  Note({this.id, this.title,this.body, this.isLocked = false, this.color = const Color(4294688813)});
+  Note({this.id = "", this.title = "",this.body= "", this.isLocked = false, this.color = const Color(4294688813)});
 }
 
 List<Note> notes = new List();

@@ -32,6 +32,7 @@ class _EditorState extends State<Editor> {
     super.initState();
 
     if(widget.note.id == ""){
+      print("Nota nuova");
       isNew = true;
     }
 
@@ -41,7 +42,9 @@ class _EditorState extends State<Editor> {
     NotusDocument document; //Inizializzo il nuovo documento
 
     
-    document = _loadDocument();
+    if (!isNew) document = _loadDocument();
+    else document = new NotusDocument();
+
     
     _controller = ZefyrController(document);
 
@@ -142,6 +145,7 @@ class _EditorState extends State<Editor> {
   }
 
   void newNote() {
+    print("Nuova nota - Aggiungo!");
     try {
       Firestore.instance
         .collection("utenti")
@@ -160,6 +164,7 @@ class _EditorState extends State<Editor> {
   }
 
   void _saveDocument(BuildContext context) {
+    print("Nota modificata, Aggiorno!");
     FocusScope.of(context).requestFocus(FocusNode()); //Chiude la tastiera
     final contents =
         jsonEncode(_controller.document); //Codifica il contenuto del corpo
@@ -193,7 +198,9 @@ class _EditorState extends State<Editor> {
       if (_title.text.isEmpty)
         throw Exception("Il titolo non può essere vuoto");
 
-      if (isNew) newNote();
+      if (isNew) {
+        newNote();
+      }
       else
         if (isEditing) _saveDocument(context);
 
