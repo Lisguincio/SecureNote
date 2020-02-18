@@ -84,7 +84,7 @@ class _EditorState extends State<Editor> {
                             Icons.color_lens,
                           ),
                           onPressed: showColorPicker),
-                      AppTitle("New", "Note"),
+                      AppTitle(isNew ? "New" : "Editor", "Note"),
                       Expanded(child: SizedBox()),
                       IconButton(
                         icon: widget.note.isLocked
