@@ -1,29 +1,24 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:securenote/model/title.dart';
-import 'package:securenote/model/user.dart';
-import 'package:securenote/view/register.dart';
-import 'package:toast/toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:securenote/main.dart';
+import 'package:securenote/model/title.dart';
 import 'package:securenote/theme.dart';
+import 'package:securenote/view/login.dart';
+import 'package:toast/toast.dart';
 
-class Login extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
 
-  TextEditingController _pass = new TextEditingController();
+  TextEditingController _username = new TextEditingController();
   TextEditingController _email = new TextEditingController();
+  TextEditingController _password = new TextEditingController();
+  TextEditingController _confirm = new TextEditingController();
+  bool regist  =false;
 
-  bool _obscure = false; //Variabile per il toggle del visualizza password
-
-  bool login = false; //Variabile per evitare che il doppio TAP su Login effettui due volte il login
-
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = new GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,20 +30,38 @@ class _LoginState extends State<Login> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Expanded(child: Center(child: AppTitle("Secure","Note"))),
-        Expanded(flex: 2, child: 
+        Expanded(flex: 3, child: 
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top:Radius.circular(50)),
               color: whitetheme.backgroundColor,
             ),
-            padding: EdgeInsets.fromLTRB(40,20,40,20),
+            padding: EdgeInsets.fromLTRB(40,0,40,0),
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
 
-                  
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.words,
+                    controller: _username,
+                    style: TextStyle(
+                      fontSize: 20,
+                      //fontWeight: FontWeight.w100
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "Username",
+                      border: UnderlineInputBorder(),
+                    ),
+                    validator: (string){
+                      if(string.isEmpty && string.contains(" ")) return "Check your Username";
+                      return null;
+                    },
+                  ),
                   //Email
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
@@ -70,15 +83,14 @@ class _LoginState extends State<Login> {
                   //Password
                   TextFormField(
                     keyboardType: TextInputType.visiblePassword,
-                    obscureText: !_obscure,
-                    controller: _pass,
+                    obscureText: true,
+                    controller: _password,
                     style: TextStyle(
                       fontSize: 20,
                       //fontWeight: FontWeight.w100
                     ),
                     decoration: InputDecoration(
                       hintText: "Password",
-                      suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: ()=>setState((){_obscure = !_obscure;})),
                       border: UnderlineInputBorder(),
                     ),
                     validator: (string){
@@ -86,35 +98,40 @@ class _LoginState extends State<Login> {
                       return null;
                     },
                   ),
-                  
+
+                  TextFormField(
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                    controller: _confirm,
+                    style: TextStyle(
+                      fontSize: 20,
+                      //fontWeight: FontWeight.w100
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "Conferma Password",
+                      border: UnderlineInputBorder(),
+                    ),
+                    validator: (string){
+                      if(string != _password.text) return "Password don't match";
+                      return null;
+                    },
+                  ),
+                  //Expanded(child: SizedBox()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Expanded(child: Text("Entra", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40), textAlign: TextAlign.center,)),
+                      Expanded(child: Text("Registrati", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40), textAlign: TextAlign.center,)),
                       FloatingActionButton(
                         backgroundColor: whitetheme.accentColor,
                         child: Icon(Icons.arrow_forward, size: 40, color: Colors.black,),
                         onPressed: (){
-                          if(!login && _formKey.currentState.validate()){
-                            autenticate(_email.text, _pass.text, context);
-                            login = true;
+                          if(!regist && _formKey.currentState.validate()){
+                            register(_username.text, _email.text, _password.text, context);
+                            regist = true;
                           }
                         }
                       ),
                     ]
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                        child: Text("Registrati", style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.bold, fontSize: 18)),
-                        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>Register())),
-                      ),
-                      GestureDetector(
-                        child: Text("Password\nDimenticata", style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.end),
-                        onTap: null,
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -127,26 +144,21 @@ class _LoginState extends State<Login> {
       );
   }
 
-  Future<void>autenticate(email, password, context)async{
-    AuthResult result;
+  Future<void>register(username, email, password, context)async{
+    FirebaseUser user;
     try {
       FocusScope.of(context).requestFocus(FocusNode());
+      print("Username" + username);
       print("Email: "+email);
       print("Password: "+password);
 
-      result = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      Toast.show("Login Success!", context);
-      if(result.user.isEmailVerified)
-        mainUser = result.user; 
-      else 
-        throw Exception("This account isn't active, check your email inbox!");
-      login = true;
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
+      FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((r){user = r.user; user.sendEmailVerification();});
+      Toast.show("Check your mail inbox!", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
     } catch (e) {
-      FirebaseAuth.instance.signOut();
-      login = false;
       print(e.message);
       Toast.show(e.message, context,duration: 3);
+      regist = false;
     }
   }
 }

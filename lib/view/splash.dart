@@ -26,7 +26,8 @@ class _SplashPageState extends State<SplashPage> {
       if (currentUser == null) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Login()));
-      } else {
+      } 
+      else {
         mainUser = currentUser;
         Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => MyHomePage()))
