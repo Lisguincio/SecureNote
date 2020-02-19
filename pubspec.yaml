@@ -26,6 +26,7 @@ dependencies:
   toast:
   flutter_material_color_picker:
   local_auth: ^0.4.0+1
+  pattern_lock:
 
   google_sign_in:
   firebase_auth:
