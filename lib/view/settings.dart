@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 import 'package:securenote/theme.dart';
+import 'package:securenote/view/archive.dart';
 import 'package:securenote/view/login.dart';
 
 class Settings extends StatefulWidget {
@@ -38,12 +39,14 @@ class _SettingsState extends State<Settings> {
                     child: ListView(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       children: <Widget>[
+                        //Aggiungi in coda le nuove note
                       ListTile(
                         title: Text("Aggiungi in coda le nuove note"),
                         trailing: Switch(value: newoNbottom, onChanged: (b)=>setState((){
                           newoNbottom = b;
                         })),
                       ),
+                        //Tema Scuro
                       ListTile(
                         title: Text("Tema Scuro"),
                         subtitle: Text("Attiva se desideri un tema scuro"),
@@ -54,6 +57,15 @@ class _SettingsState extends State<Settings> {
                             darkTheme = false;
                         })),
                       ),
+                        //Archive
+                      ListTile(
+                        title: Text("Archivio"),
+                        onTap: (){
+                            print("GOTO: Archivio");
+                            navArchive(); //Apro l'archivio
+                        },
+                      ),
+                        //Logout
                       ListTile(
                         title: Text("Esci"),
                         subtitle: Text("Effettua il logout!"),
@@ -67,6 +79,10 @@ class _SettingsState extends State<Settings> {
         ),
       ),
     );
+  }
+
+  void navArchive(){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>Archive()));
   }
 
   void logout() async {
@@ -89,6 +105,7 @@ class _SettingsState extends State<Settings> {
     });
   }
 
+  //Aggiungi in coda le nuove note
   bool newoNbottom = false;
   
 }
