@@ -11,7 +11,6 @@ import 'package:securenote/theme.dart';
 import 'package:securenote/model/tile.dart';
 import 'package:securenote/view/settings.dart';
 import 'package:securenote/view/splash.dart';
-import 'package:toast/toast.dart';
 
 void main() => runApp(MyApp());
 
@@ -39,7 +38,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    readDocs();
+    //readDocs();
     super.initState();
   }
 
@@ -55,11 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       actionsIconTheme: IconThemeData(color: Colors.black),
                       leading: IconButton(icon: Icon(Icons.settings, color: Colors.black), onPressed: navSetting ),
                       actions: <Widget>[
-                        IconButton(icon: Icon(Icons.refresh,size: 30,), onPressed: readDocs),
                         IconButton(icon: Icon(Icons.add, size: 30,), onPressed: newNote,)
                       ],
                       backgroundColor: whitetheme.accentColor,
-                      //expandedHeight: 70,
                       floating: true,
                       pinned: false,
                       title: AppTitle("Secure", "Note"),
@@ -72,11 +69,26 @@ class _MyHomePageState extends State<MyHomePage> {
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(30))),
                       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: ListView.builder(
-                        itemCount: notes.length,
-                        itemBuilder: (context, i) {
-                          return Tiles(notes[i]);
-                        },
+                      child: StreamBuilder(
+                        stream: Firestore.instance.collection("utenti").document(mainUser.email).collection("note").snapshots(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot>snapshot) {
+                          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+                          else
+                            return ListView.builder(
+                              itemCount: snapshot.data.documents.length,
+                              itemBuilder: (context, i) {
+                                return Tiles(
+                                  Note(
+                                    id: snapshot.data.documents[i].documentID,
+                                    title: snapshot.data.documents[i]['title'],
+                                    color: Color(int.parse(snapshot.data.documents[i]['color'])),
+                                    isLocked: snapshot.data.documents[i]["locked"],
+                                    body: snapshot.data.documents[i]['body']  
+                                  )
+                                );
+                              },
+                            );
+                        }
                       )),
                 )));
   }
@@ -91,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-  void readDocs() {
+  /*void readDocs() {
     print("READ_DOCS");
     List<DocumentSnapshot> snap = new List();
     Firestore.instance
@@ -118,5 +130,5 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     });
-  }
+  }*/
 }
