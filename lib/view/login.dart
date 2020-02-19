@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 import 'package:securenote/view/register.dart';
@@ -103,6 +104,25 @@ class _LoginState extends State<Login> {
                       ),
                     ]
                   ),
+                  OutlineButton(
+                    
+                    splashColor: Colors.grey,
+                    onPressed: null,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                    highlightElevation: 0,
+                    borderSide: BorderSide(color: Colors.grey),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child:Text(
+                        'Sign in with Google',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                  ),
+                ),
+              )
+            ),
+  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -125,6 +145,16 @@ class _LoginState extends State<Login> {
     ) 
         ),
       );
+  }
+
+  Future<void>googleAutenticate()async{
+    GoogleSignIn googleSignIn = new GoogleSignIn();
+    GoogleSignInAccount signInAccount = await googleSignIn.signIn();
+    GoogleSignInAuthentication googleSignInAuthentication = await signInAccount.authentication;
+    AuthCredential credential = GoogleAuthProvider.getCredential(
+      idToken: googleSignInAuthentication.idToken, 
+      accessToken: googleSignInAuthentication.accessToken);
+    AuthResult result = await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   Future<void>autenticate(email, password, context)async{
