@@ -70,9 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               BorderRadius.vertical(top: Radius.circular(30))),
                       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: StreamBuilder(
-                        stream: Firestore.instance.collection("utenti").document(mainUser.email).collection("note").snapshots(),
+                        stream: refresh,
                         builder: (context, AsyncSnapshot<QuerySnapshot>snapshot) {
-                          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
+                          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),); //TODO: Visualizzare le note anche offline
                           else
                             return ListView.builder(
                               itemCount: snapshot.data.documents.length,
@@ -100,6 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void navSetting(){
     Navigator.push(context, MaterialPageRoute(builder: (context)=>Settings()));
   }
+
+  final Stream<QuerySnapshot> refresh = Firestore.instance.collection("utenti").document(mainUser.email).collection("note").snapshots();
+  
 
 
 
