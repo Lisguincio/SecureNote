@@ -68,11 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: whitetheme.backgroundColor,
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(30))),
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      //padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: StreamBuilder(
                         stream: refresh,
                         builder: (context, AsyncSnapshot<QuerySnapshot>snapshot) {
-                          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),); //TODO: Visualizzare le note anche offline
+                          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
                           else
                             return ListView.builder(
                               itemCount: snapshot.data.documents.length,
