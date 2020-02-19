@@ -51,6 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 headerSliverBuilder: (BuildContext context, bool a) {
                   return <Widget>[
                     SliverAppBar(
+                      expandedHeight: 70,
+                      centerTitle: true,
                       actionsIconTheme: IconThemeData(color: Colors.black),
                       leading: IconButton(icon: Icon(Icons.settings, color: Colors.black), onPressed: navSetting ),
                       actions: <Widget>[
@@ -58,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                       backgroundColor: whitetheme.accentColor,
                       floating: true,
-                      pinned: false,
+                      pinned: true,
                       title: AppTitle("Secure", "Note"),
                     )
                   ];
@@ -73,7 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         stream: refresh,
                         builder: (context, AsyncSnapshot<QuerySnapshot>snapshot) {
                           if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
-                          else
+                          else{
+                            if(snapshot.data.documents.isEmpty){
+                              return Center(child:Text("Ancora nulla"));
+                            }
+                            else
                             return ListView.builder(
                               itemCount: snapshot.data.documents.length,
                               itemBuilder: (context, i) {
@@ -88,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 );
                               },
                             );
+                          }
                         }
                       )),
                 )));
