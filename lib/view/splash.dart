@@ -6,6 +6,7 @@ import 'package:securenote/main.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 import 'package:securenote/theme.dart';
+import 'package:securenote/view/settings.dart';
 
 class SplashPage extends StatefulWidget {
   SplashPage({Key key}) : super(key: key);
@@ -20,7 +21,8 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   initState() {
-    auth.loadtypes();
+    initPrefs();
+    LocalAuthenticationService(context).loadtypes();
 
     FirebaseAuth.instance.currentUser().then((currentUser) {
       if (currentUser == null) {

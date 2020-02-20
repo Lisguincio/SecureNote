@@ -1,10 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 import 'package:securenote/view/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:securenote/main.dart';
@@ -21,10 +22,14 @@ class _LoginState extends State<Login> {
   TextEditingController _email = new TextEditingController();
 
   bool _obscure = false; //Variabile per il toggle del visualizza password
-
   bool login = false; //Variabile per evitare che il doppio TAP su Login effettui due volte il login
-
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    rememberEmail();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +110,8 @@ class _LoginState extends State<Login> {
                     ]
                   ),
                   OutlineButton(
-                    
                     splashColor: Colors.grey,
-                    onPressed: null,
+                    onPressed: ()=>Toast.show("Ancora non implementato", context),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
                     highlightElevation: 0,
                     borderSide: BorderSide(color: Colors.grey),
@@ -148,13 +152,13 @@ class _LoginState extends State<Login> {
   }
 
   Future<void>googleAutenticate()async{
-    GoogleSignIn googleSignIn = new GoogleSignIn();
+    /* GoogleSignIn googleSignIn = new GoogleSignIn();
     GoogleSignInAccount signInAccount = await googleSignIn.signIn();
     GoogleSignInAuthentication googleSignInAuthentication = await signInAccount.authentication;
     AuthCredential credential = GoogleAuthProvider.getCredential(
       idToken: googleSignInAuthentication.idToken, 
       accessToken: googleSignInAuthentication.accessToken);
-    AuthResult result = await FirebaseAuth.instance.signInWithCredential(credential);
+    AuthResult result = await FirebaseAuth.instance.signInWithCredential(credential); */
   }
 
   Future<void>autenticate(email, password, context)async{
@@ -166,9 +170,12 @@ class _LoginState extends State<Login> {
 
       result = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
       Toast.show("Login Success!", context);
-      if(result.user.isEmailVerified)
+      if(result.user.isEmailVerified){
         mainUser = result.user; 
-      else 
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString("rememberEmail", _email.text);
+      }
+        else 
         throw Exception("This account isn't active, check your email inbox!");
       login = true;
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
@@ -178,5 +185,11 @@ class _LoginState extends State<Login> {
       print(e.message);
       Toast.show(e.message, context,duration: 3);
     }
+  }
+
+  void rememberEmail()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    if(preferences.containsKey("rememberEmail"))
+      _email.text = preferences.get("rememberEmail");
   }
 }

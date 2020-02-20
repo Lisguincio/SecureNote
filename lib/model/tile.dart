@@ -6,9 +6,6 @@ import 'package:securenote/auth.dart';
 import 'package:securenote/model/note.dart';
 import 'package:securenote/view/editor.dart';
 
-import 'package:local_auth/local_auth.dart';
-
-
 
 class Tiles extends StatefulWidget {
 
@@ -21,8 +18,6 @@ class Tiles extends StatefulWidget {
 }
 
 class _TilesState extends State<Tiles> {
-
-  LocalAuthentication localauth = LocalAuthentication();
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +41,9 @@ class _TilesState extends State<Tiles> {
             title: Text(widget.note.title, style: TextStyle(fontWeight: FontWeight.bold),),
             trailing: widget.note.isLocked ? Icon(Icons.lock_outline) : Icon(Icons.lock_open),
             onTap: ()async{
+              final localauth = LocalAuthenticationService(context);
               if(widget.note.isLocked){
-                if(LocalAuthenticationService.btype.isNotEmpty)
-                  auth.authenticate().then((b){
-                    if(b)
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));
-                    });
-                
-                //else PIN/PATTERN
-                  
-
-
+                localauth.authenticate().then((b){if(b) Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));});
               }
               else
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));

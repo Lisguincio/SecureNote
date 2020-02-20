@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:securenote/auth.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
 import 'package:securenote/theme.dart';
 import 'package:securenote/view/archive.dart';
 import 'package:securenote/view/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -12,6 +14,12 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+
+  @override
+  void initState(){
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -42,20 +50,57 @@ class _SettingsState extends State<Settings> {
                         //Aggiungi in coda le nuove note
                       ListTile(
                         title: Text("Aggiungi in coda le nuove note"),
-                        trailing: Switch(value: newoNbottom, onChanged: (b)=>setState((){
-                          newoNbottom = b;
-                        })),
+                        trailing: Switch(
+                          value: newOnBottom, onChanged: (b)=>setState((){
+                            newOnBottom = b;
+                          })
+                        ),
                       ),
                         //Tema Scuro
                       ListTile(
                         title: Text("Tema Scuro"),
                         subtitle: Text("Attiva se desideri un tema scuro"),
-                        trailing: Switch(value: darkTheme, onChanged:(s)=>setState((){
-                          if(s==true)
-                            darkTheme = true;
-                          else
-                            darkTheme = false;
-                        })),
+                        trailing: Switch(value: darkTheme, onChanged:(s)async{
+                          if(s){
+                            setState(() {
+                              darkTheme = true;
+                            });
+                          }
+                          else{
+                            setState(() {
+                              darkTheme = false;
+                            });
+                          }
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          prefs.setBool("darkTheme", darkTheme);   
+                        })
+                      ),
+                        //Tipo di passkey
+                      ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("Tipo di passkey"),
+                            DropdownButton<String>(
+                              value: passKey,
+                              onChanged:(next)async{
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                prefs.setString("passKey", next);
+                                setState((){
+                                passKey = next;
+                                print(("Selezionato: " + passKey));
+                              });},
+                              items: [
+                                if(btype.isNotEmpty)
+                                DropdownMenuItem(
+                                  child: Text("Fingerprint"), value: "fingerprint",),
+                                DropdownMenuItem(
+                                  child: Text("Pattern"), value: "pattern"),
+                                DropdownMenuItem(
+                                  child: Text("Pin"), value: "pin"),
+                              ]
+                            )
+                        ],),
                       ),
                         //Archive
                       ListTile(
@@ -106,6 +151,19 @@ class _SettingsState extends State<Settings> {
   }
 
   //Aggiungi in coda le nuove note
-  bool newoNbottom = false;
-  
+
+}
+
+bool darkTheme = false;
+bool newOnBottom = false;
+String passKey = "pin";
+
+Future<void>initPrefs()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.containsKey("passKey"))
+    passKey = prefs.getString("passKey");
+  if(prefs.containsKey("darkTheme"))
+    darkTheme = prefs.getBool("darkTheme");
+  if(prefs.containsKey("newOnBottom"))
+    newOnBottom = prefs.getBool("newOnBottom");
 }
