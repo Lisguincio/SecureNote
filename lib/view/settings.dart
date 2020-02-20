@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pattern_lock/pattern_lock.dart';
 import 'package:securenote/auth.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
@@ -7,6 +8,7 @@ import 'package:securenote/theme.dart';
 import 'package:securenote/view/archive.dart';
 import 'package:securenote/view/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -86,45 +88,59 @@ class _SettingsState extends State<Settings> {
                               onChanged:(next)async{
                                 SharedPreferences prefs = await SharedPreferences.getInstance();
                                 prefs.setString("passKey", next);
-                                setState((){
-                                passKey = next;
-                                print(("Selezionato: " + passKey));
-                              });},
-                              items: [
-                                if(btype.isNotEmpty)
-                                DropdownMenuItem(
-                                  child: Text("Fingerprint"), value: "fingerprint",),
-                                DropdownMenuItem(
-                                  child: Text("Pattern"), value: "pattern"),
-                                DropdownMenuItem(
-                                  child: Text("Pin"), value: "pin"),
-                              ]
-                            )
-                        ],),
-                      ),
-                        //Archive
-                      ListTile(
-                        title: Text("Archivio"),
-                        onTap: (){
-                            print("GOTO: Archivio");
-                            navArchive(); //Apro l'archivio
-                        },
-                      ),
-                        //Logout
-                      ListTile(
-                        title: Text("Esci"),
-                        subtitle: Text("Effettua il logout!"),
-                        onTap: (){
-                            print("User " + mainUser.email + " LOGOUT!");
-                            logout(); //Effettuo il logout
-                        },
-                      )
-                    ])))
-          ],
+                                if(next == "pattern"){
+                                  var string = await setNewPattern();
+                                  if(string != null){
+                                    setState(() {
+                                      passKey = next;
+                                    });
+                                    prefs.setString("pattern", string);
+                                  }
+                                  else{
+                                    Toast.show("Pattern non inserito", context);
+                                  }
+                                    
+                                }
+                                else
+                                  setState((){
+                                    passKey = next;
+                                    print(("Selezionato: " + passKey));
+                                  });},
+                                  items: [
+                                  if(btype.isNotEmpty)
+                                  DropdownMenuItem(
+                                    child: Text("Fingerprint"), value: "fingerprint",),
+                                  DropdownMenuItem(
+                                    child: Text("Pattern"), value: "pattern"),
+                                  DropdownMenuItem(
+                                    child: Text("Pin"), value: "pin"),
+                                ]
+                              )
+                          ],),
+                        ),
+                          //Archive
+                        ListTile(
+                          title: Text("Archivio"),
+                          onTap: (){
+                              print("GOTO: Archivio");
+                              navArchive(); //Apro l'archivio
+                          },
+                        ),
+                          //Logout
+                        ListTile(
+                          title: Text("Esci"),
+                          subtitle: Text("Effettua il logout!"),
+                          onTap: (){
+                              print("User " + mainUser.email + " LOGOUT!");
+                              logout(); //Effettuo il logout
+                          },
+                        )
+                      ])))
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
   void navArchive(){
     Navigator.push(context, MaterialPageRoute(builder: (context)=>Archive()));
@@ -148,6 +164,22 @@ class _SettingsState extends State<Settings> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
       }
     });
+  }
+
+  Future<String>setNewPattern()async{
+    String result;
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context)=>AlertDialog(
+        title: Text("Imposta un nuovo Pattern"),
+        content: PatternLock(
+          onInputComplete: (l){
+            result = l.toString();
+            Navigator.pop(context);}),
+      )
+    );
+    return result;
   }
 
   //Aggiungi in coda le nuove note

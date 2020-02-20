@@ -3,6 +3,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:pattern_lock/pattern_lock.dart';
 import 'package:flutter/services.dart';
 import 'package:securenote/view/settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 List<BiometricType> btype = new List();
 
@@ -20,13 +22,10 @@ class LocalAuthenticationService {
       bool result;
       try {
         if(passKey == "fingerprint"){
-          //return await biometricAuth();
-          return await patternAuth();
+          return await biometricAuth();
         }
         else
           return await patternAuth();
-        
-        
         
       } on PlatformException catch (e) {print(e);}
       return result;
@@ -39,6 +38,8 @@ class LocalAuthenticationService {
   }
 
   Future<bool>patternAuth()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String string = preferences.getString("pattern");
     bool result;
     await showDialog<bool>(
       context: context, 
@@ -48,10 +49,17 @@ class LocalAuthenticationService {
           content: LimitedBox(
             maxHeight: 50,
             child: PatternLock(
-              onInputComplete: (string){
-                //Se il codice è corretto
+              onInputComplete: (s){
+                if(s.toString() == string){
+                  result = true;
+                  Toast.show("Pattern Corretto!", context);
+                }
+                else{
+                  result = false;
+                  Toast.show("Pattern Errato!", context);
+                }
                 Navigator.pop(context);
-                result = true;
+                
               }
             )
           ),
