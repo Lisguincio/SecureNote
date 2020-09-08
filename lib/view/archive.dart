@@ -54,7 +54,7 @@ class _ArchiveState extends State<Archive> {
                               itemBuilder: (context, i) {
                                 final key = snapshot.data.documents[i].documentID;
                                 return Dismissible(
-                                  key: Key(key),
+                                  key: UniqueKey(),
                                   background: slideToLeft(" Unarchive", Icons.unarchive),
                                   secondaryBackground: slideToRight("Delete ", Icons.delete),
                                   onDismissed: (direction){

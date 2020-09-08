@@ -28,10 +28,6 @@ Future<void> removeNote(String id, BuildContext context, String from)async{
     SnackBar(
       duration: Duration(seconds: 5),
       content: Text("Nota eliminata"),
-      action: SnackBarAction(
-        label: "Annulla",
-        onPressed: () async {return await Firestore.instance.collection('utenti').document(mainUser.email).collection(from).add(temp.data);},
-      ),
     )
   );
 }
@@ -55,12 +51,6 @@ Future<void> archiveNote(String id, context)async{
     SnackBar(
       duration: Duration(seconds: 5),
       content: Text("Nota Archiviata"),
-      action: SnackBarAction(
-        label: "Annulla",
-        onPressed: () async {
-          await Firestore.instance.collection("utenti").document(mainUser.email).collection("archive").document(id).delete();
-          return await Firestore.instance.collection('utenti').document(mainUser.email).collection("note").add(temp.data);},
-      ),
     )
   );
 

@@ -61,6 +61,7 @@ class _EditorState extends State<Editor> {
       }
     });
     _focusNode = FocusNode();
+    
   }
 
   @override
@@ -186,7 +187,7 @@ class _EditorState extends State<Editor> {
     }
   }
 
-  NotusDocument _loadDocument() {
+   NotusDocument _loadDocument() {
     _title = new TextEditingController(text: widget.note.title);
     if(widget.note.body == null) return NotusDocument();
     List data = json.decode(widget.note.body);

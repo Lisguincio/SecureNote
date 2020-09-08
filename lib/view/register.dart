@@ -30,7 +30,7 @@ class _RegisterState extends State<Register> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Expanded(child: Center(child: AppTitle("Secure","Note"))),
-        Expanded(flex: 3, child: 
+        Expanded(flex: 5, child: 
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top:Radius.circular(50)),

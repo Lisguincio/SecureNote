@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pattern_lock/pattern_lock.dart';
 import 'package:securenote/auth.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
@@ -16,9 +15,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
   }
 
@@ -47,142 +45,116 @@ class _SettingsState extends State<Settings> {
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(30))),
                     child: ListView(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      children: <Widget>[
-                        //Aggiungi in coda le nuove note
-                      ListTile(
-                        title: Text("Aggiungi in coda le nuove note"),
-                        trailing: Switch(
-                          value: newOnBottom, onChanged: (b)=>setState((){
-                            newOnBottom = b;
-                          })
-                        ),
-                      ),
-                        //Tema Scuro
-                      ListTile(
-                        title: Text("Tema Scuro"),
-                        subtitle: Text("Attiva se desideri un tema scuro"),
-                        trailing: Switch(value: darkTheme, onChanged:(s)async{
-                          if(s){
-                            setState(() {
-                              darkTheme = true;
-                            });
-                          }
-                          else{
-                            setState(() {
-                              darkTheme = false;
-                            });
-                          }
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          prefs.setBool("darkTheme", darkTheme);   
-                        })
-                      ),
-                        //Tipo di passkey
-                      ListTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text("Tipo di passkey"),
-                            DropdownButton<String>(
-                              value: passKey,
-                              onChanged:(next)async{
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                prefs.setString("passKey", next);
-                                if(next == "pattern"){
-                                  var string = await setNewPattern();
-                                  if(string != null){
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        children: <Widget>[
+                          //Aggiungi in coda le nuove note
+                          //Tema Scuro
+                          ListTile(
+                              title: Text("Tema Scuro"),
+                              subtitle:
+                                  Text("Attiva se desideri un tema scuro"),
+                              trailing: Switch(
+                                  value: darkTheme,
+                                  onChanged: (s) async {
                                     setState(() {
-                                      passKey = next;
+                                      darkTheme = s;
                                     });
-                                    prefs.setString("pattern", string);
-                                  }
-                                  else{
-                                    Toast.show("Pattern non inserito", context);
-                                  }
-                                    
-                                }
-                                else
-                                  setState((){
-                                    passKey = next;
-                                    print(("Selezionato: " + passKey));
-                                  });},
-                                  items: [
-                                  if(btype.isNotEmpty)
-                                  DropdownMenuItem(
-                                    child: Text("Fingerprint"), value: "fingerprint",),
-                                  DropdownMenuItem(
-                                    child: Text("Pattern"), value: "pattern"),
-                                  DropdownMenuItem(
-                                    child: Text("Pin"), value: "pin"),
-                                ]
-                              )
-                          ],),
-                        ),
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setBool("darkTheme", darkTheme);
+                                  })),
+                          //Tipo di passkey
+                          ListTile(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text("Tipo di passkey"),
+                                DropdownButton<String>(
+                                    value: passKey,
+                                    onChanged: (next) async {
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.setString("passKey", next);
+                                      setState(() {
+                                        passKey = next;
+                                        print(("Selezionato: " + passKey));
+                                      });
+                                    },
+                                    items: [
+                                      if (btype.isNotEmpty)
+                                        DropdownMenuItem(
+                                          child: Text("Fingerprint"),
+                                          value: "fingerprint",
+                                        ),
+                                      DropdownMenuItem(
+                                        child: Text("Pin"),
+                                        value: "pin",
+                                      ),
+                                    ])
+                              ],
+                            ),
+                          ),
                           //Archive
-                        ListTile(
-                          title: Text("Archivio"),
-                          onTap: (){
+                          ListTile(
+                            title: Text("Archivio"),
+                            onTap: () {
                               print("GOTO: Archivio");
                               navArchive(); //Apro l'archivio
-                          },
-                        ),
+                            },
+                          ),
                           //Logout
-                        ListTile(
-                          title: Text("Esci"),
-                          subtitle: Text("Effettua il logout!"),
-                          onTap: (){
+                          ListTile(
+                            title: Text("Esci"),
+                            subtitle: Text("Effettua il logout!"),
+                            onTap: () {
                               print("User " + mainUser.email + " LOGOUT!");
                               logout(); //Effettuo il logout
-                          },
-                        )
-                      ])))
-            ],
-          ),
+                            },
+                          )
+                        ])))
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
-  void navArchive(){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>Archive()));
+  void navArchive() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Archive()));
   }
 
   void logout() async {
-    showDialog<bool>(context: context,
-    builder: (context){
-      return AlertDialog(
-        content: Text("Sicuro di voler uscire da questo account?"),
-        actions: <Widget>[
-          FlatButton(onPressed:(){Navigator.pop(context,true);} , child: Text("Si, voglio uscire")),
-          FlatButton(onPressed: (){Navigator.pop(context,false);}, child: Text("No, non voglio"))
-        ],
-      );
-    },
-    ).then((r){
-      if (r == true){
+    showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text("Sicuro di voler uscire da questo account?"),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: Text("Si, voglio uscire")),
+            FlatButton(
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+                child: Text("No, non voglio"))
+          ],
+        );
+      },
+    ).then((r) {
+      if (r == true) {
         FirebaseAuth.instance.signOut();
-        Navigator.popUntil(context,(route){return route.isFirst;});
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
+        Navigator.popUntil(context, (route) {
+          return route.isFirst;
+        });
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Login()));
       }
     });
   }
 
-  Future<String>setNewPattern()async{
-    String result;
-    await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context)=>AlertDialog(
-        title: Text("Imposta un nuovo Pattern"),
-        content: PatternLock(
-          onInputComplete: (l){
-            result = l.toString();
-            Navigator.pop(context);}),
-      )
-    );
-    return result;
-  }
-
-  //Aggiungi in coda le nuove note
+  
 
 }
 
@@ -190,12 +162,10 @@ bool darkTheme = false;
 bool newOnBottom = false;
 String passKey = "pin";
 
-Future<void>initPrefs()async{
+Future<void> initPrefs() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.containsKey("passKey"))
-    passKey = prefs.getString("passKey");
-  if(prefs.containsKey("darkTheme"))
-    darkTheme = prefs.getBool("darkTheme");
-  if(prefs.containsKey("newOnBottom"))
+  if (prefs.containsKey("passKey")) passKey = prefs.getString("passKey");
+  if (prefs.containsKey("darkTheme")) darkTheme = prefs.getBool("darkTheme");
+  if (prefs.containsKey("newOnBottom"))
     newOnBottom = prefs.getBool("newOnBottom");
 }

@@ -87,7 +87,7 @@ Widget slideToRight(String text, IconData icon){
   );
 }
 
-  Widget slideToLeft(String text, IconData icon){
+Widget slideToLeft(String text, IconData icon){
     return Container(
     color: Colors.yellow.shade700,
     child: Align(
