@@ -9,6 +9,8 @@ import 'package:securenote/view/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
+import '../main.dart';
+
 class Settings extends StatefulWidget {
   @override
   _SettingsState createState() => _SettingsState();
@@ -41,7 +43,7 @@ class _SettingsState extends State<Settings> {
             Expanded(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: whitetheme.backgroundColor,
+                        color: Theme.of(context).canvasColor,
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(30))),
                     child: ListView(
@@ -56,12 +58,11 @@ class _SettingsState extends State<Settings> {
                               trailing: Switch(
                                   value: darkTheme,
                                   onChanged: (s) async {
-                                    setState(() {
-                                      darkTheme = s;
-                                    });
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
-                                    prefs.setBool("darkTheme", darkTheme);
+                                    prefs.setBool("darkTheme", s);
+                                    darkTheme = s;
+                                    runApp(MyApp());
                                   })),
                           //Tipo di passkey
                           ListTile(
@@ -153,9 +154,6 @@ class _SettingsState extends State<Settings> {
       }
     });
   }
-
-  
-
 }
 
 bool darkTheme = false;

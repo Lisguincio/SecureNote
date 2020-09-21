@@ -31,21 +31,21 @@ class _EditorState extends State<Editor> {
   void initState() {
     super.initState();
 
-    if(widget.note.id == ""){
+    if (widget.note.id == "") {
       print("Nota nuova");
       isNew = true;
     }
 
     _title =
         new TextEditingController(); //Inizializzo il nuovo TextEditingController per il titolo
-    
+
     NotusDocument document; //Inizializzo il nuovo documento
 
-    
-    if (!isNew) document = _loadDocument();
-    else document = new NotusDocument();
+    if (!isNew)
+      document = _loadDocument();
+    else
+      document = new NotusDocument();
 
-    
     _controller = ZefyrController(document);
 
     _controller.addListener(() {
@@ -61,7 +61,6 @@ class _EditorState extends State<Editor> {
       }
     });
     _focusNode = FocusNode();
-    
   }
 
   @override
@@ -70,8 +69,8 @@ class _EditorState extends State<Editor> {
     // one of its parents.
     return SafeArea(
       child: WillPopScope(
-          onWillPop:willpop,
-          child: Scaffold(
+        onWillPop: willpop,
+        child: Scaffold(
           backgroundColor: widget.note.color,
           body: Column(
             mainAxisSize: MainAxisSize.min,
@@ -81,9 +80,7 @@ class _EditorState extends State<Editor> {
                   child: Row(
                     children: <Widget>[
                       IconButton(
-                          icon: Icon(
-                            Icons.color_lens,
-                          ),
+                          icon: Icon(Icons.color_lens, color: Colors.black),
                           onPressed: showColorPicker),
                       AppTitle(isNew ? "New" : "Editor", "Note"),
                       Expanded(child: SizedBox()),
@@ -91,6 +88,7 @@ class _EditorState extends State<Editor> {
                         icon: widget.note.isLocked
                             ? Icon(Icons.lock_outline)
                             : Icon(Icons.lock_open),
+                        color: Colors.black,
                         onPressed: () => setState(() {
                           widget.note.isLocked = !widget.note.isLocked;
                           isEditing = true;
@@ -104,6 +102,7 @@ class _EditorState extends State<Editor> {
                       ),
                       IconButton(
                         icon: Icon(Icons.check),
+                        color: Colors.black,
                         onPressed: () {
                           done();
                         },
@@ -112,7 +111,7 @@ class _EditorState extends State<Editor> {
                   )),
               Container(
                 decoration: BoxDecoration(
-                    color: whitetheme.backgroundColor,
+                    color: Theme.of(context).canvasColor,
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(30))),
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
@@ -125,8 +124,10 @@ class _EditorState extends State<Editor> {
                 ),
               ),
               Expanded(
+                flex: 10,
                 child: Container(
-                  decoration: BoxDecoration(color: whitetheme.backgroundColor),
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).canvasColor),
                   padding: EdgeInsets.all(10),
                   child: ZefyrScaffold(
                     child: ZefyrEditor(
@@ -149,19 +150,18 @@ class _EditorState extends State<Editor> {
     print("Nuova nota - Aggiungo!");
     try {
       Firestore.instance
-        .collection("utenti")
-        .document(mainUser.email)
-        .collection("note")
-        .add({
-      'title': _title.text,
-      'body': jsonEncode(_controller.document),
-      'locked': widget.note.isLocked,
-      'color': widget.note.color.value.toString()
-    });
+          .collection("utenti")
+          .document(mainUser.email)
+          .collection("note")
+          .add({
+        'title': _title.text,
+        'body': jsonEncode(_controller.document),
+        'locked': widget.note.isLocked,
+        'color': widget.note.color.value.toString()
+      });
     } catch (e) {
-      Toast.show(e.message, context,duration: 2);
+      Toast.show(e.message, context, duration: 2);
     }
-    
   }
 
   void _saveDocument(BuildContext context) {
@@ -187,9 +187,9 @@ class _EditorState extends State<Editor> {
     }
   }
 
-   NotusDocument _loadDocument() {
+  NotusDocument _loadDocument() {
     _title = new TextEditingController(text: widget.note.title);
-    if(widget.note.body == null) return NotusDocument();
+    if (widget.note.body == null) return NotusDocument();
     List data = json.decode(widget.note.body);
     return NotusDocument.fromJson(data);
   }
@@ -201,9 +201,7 @@ class _EditorState extends State<Editor> {
 
       if (isNew) {
         newNote();
-      }
-      else
-        if (isEditing) _saveDocument(context);
+      } else if (isEditing) _saveDocument(context);
 
       Navigator.pop(context);
     } catch (e) {
@@ -235,7 +233,8 @@ class _EditorState extends State<Editor> {
               FlatButton(
                   onPressed: () {
                     setState(() {
-                      widget.note.color = Color.fromRGBO(selected.red, selected.green, selected.blue, 1);
+                      widget.note.color = Color.fromRGBO(
+                          selected.red, selected.green, selected.blue, 1);
                       print("Ora la nota ha colore: " +
                           widget.note.color.toString());
                     });
@@ -248,21 +247,26 @@ class _EditorState extends State<Editor> {
         });
   }
 
-  Future<bool> willpop()async{
-    if (isEditing == false)
-      return true;
-    return showDialog<bool>(context: context,
-    builder: (context){
-      return AlertDialog(
-        title: Text("Sei sicuro di voler uscire?"),
-        content: Text("Sicuro di voler tornare indietro? I cambiamenti effettuati non verrano salvati!"),
-        actions: <Widget>[
-          FlatButton(onPressed: ()=>Navigator.pop(context, false), child: Text("No, Grazie")),
-          FlatButton(onPressed: (){
-            Navigator.pop(context, true);
-          }, child: Text("Esci")),
-        ],
-      );
-    });
+  Future<bool> willpop() async {
+    if (isEditing == false) return true;
+    return showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Sei sicuro di voler uscire?"),
+            content: Text(
+                "Sicuro di voler tornare indietro? I cambiamenti effettuati non verrano salvati!"),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text("No, Grazie")),
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text("Esci")),
+            ],
+          );
+        });
   }
 }

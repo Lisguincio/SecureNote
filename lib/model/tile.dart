@@ -6,9 +6,7 @@ import 'package:securenote/auth.dart';
 import 'package:securenote/model/note.dart';
 import 'package:securenote/view/editor.dart';
 
-
 class Tiles extends StatefulWidget {
-
   final Note note;
 
   Tiles(this.note);
@@ -18,7 +16,6 @@ class Tiles extends StatefulWidget {
 }
 
 class _TilesState extends State<Tiles> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,40 +23,44 @@ class _TilesState extends State<Tiles> {
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 5),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0 ,2),
-                color: Colors.black26,
-                blurRadius: 10
-              )
-            ]
-          ),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              color: Theme.of(context).canvasColor,
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(0, 2), color: Colors.black26, blurRadius: 10)
+              ]),
           child: ListTile(
-            leading: Icon(Icons.brightness_1, color: widget.note.color, size: 45),
-            title: Text(widget.note.title, style: TextStyle(fontWeight: FontWeight.bold),),
-            trailing: widget.note.isLocked ? Icon(Icons.lock_outline) : Icon(Icons.lock_open),
-            onTap: ()async{
-              final localauth = LocalAuthenticationService(context);
-              if(widget.note.isLocked){
-                localauth.authenticate().then((b){if(b) Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));});
-              }
-              else
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Editor(widget.note)));
-            }
-            
-            
-            
-            
-          )
-        ),
+              leading:
+                  Icon(Icons.brightness_1, color: widget.note.color, size: 45),
+              title: Text(
+                widget.note.title,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: widget.note.isLocked
+                  ? Icon(Icons.lock_outline)
+                  : Icon(Icons.lock_open),
+              onTap: () async {
+                final localauth = LocalAuthenticationService(context);
+                if (widget.note.isLocked) {
+                  localauth.authenticate().then((b) {
+                    if (b)
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Editor(widget.note)));
+                  });
+                } else
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Editor(widget.note)));
+              })),
     );
   }
 }
 
-Widget slideToRight(String text, IconData icon){
-    return Container(
+Widget slideToRight(String text, IconData icon) {
+  return Container(
     color: Colors.red,
     child: Align(
       child: Row(
@@ -87,8 +88,8 @@ Widget slideToRight(String text, IconData icon){
   );
 }
 
-Widget slideToLeft(String text, IconData icon){
-    return Container(
+Widget slideToLeft(String text, IconData icon) {
+  return Container(
     color: Colors.yellow.shade700,
     child: Align(
       child: Row(

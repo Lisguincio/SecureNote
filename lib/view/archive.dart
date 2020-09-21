@@ -18,69 +18,76 @@ class _ArchiveState extends State<Archive> {
         backgroundColor: whitetheme.accentColor,
         body: SafeArea(
             child: NestedScrollView(
-                headerSliverBuilder: (BuildContext context, bool a) {
-                  return <Widget>[
-                    SliverAppBar(
-                      expandedHeight: 70,
-                      centerTitle: true,
-                      actionsIconTheme: IconThemeData(color: Colors.black),
-                      leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.black), onPressed: ()=>Navigator.pop(context)),
-                      //actions: <Widget>[
-                      //],
-                      backgroundColor: whitetheme.accentColor,
-                      floating: true,
-                      pinned: true,
-                      title: AppTitle("Archive", "Note"),
-                    )
-                  ];
-                },
-                body: Container(
-                      decoration: BoxDecoration(
-                          color: whitetheme.backgroundColor,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(30))),
-                      //padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: StreamBuilder(
-                        stream: archiveStream,
-                        builder: (context, AsyncSnapshot<QuerySnapshot>snapshot) {
-                          if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
-                          else{
-                            if(snapshot.data.documents.isEmpty){
-                              return Center(child:Text("Ancora nulla"));
-                            }
-                            else
-                            return ListView.builder(
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (context, i) {
-                                final key = snapshot.data.documents[i].documentID;
-                                return Dismissible(
-                                  key: UniqueKey(),
-                                  background: slideToLeft(" Unarchive", Icons.unarchive),
-                                  secondaryBackground: slideToRight("Delete ", Icons.delete),
-                                  onDismissed: (direction){
-                                    if(direction == DismissDirection.endToStart)
-                                      removeNote(key, context,"archive");
-                                    else
-                                      unArchiveNote(key, context);
-                                  },
-                                    child: Tiles(
-                                    Note(
-                                      id: snapshot.data.documents[i].documentID,
-                                      title: snapshot.data.documents[i]['title'],
-                                      color: Color(int.parse(snapshot.data.documents[i]['color'])),
-                                      isLocked: snapshot.data.documents[i]["locked"],
-                                      body: snapshot.data.documents[i]['body']  
-                                    )
-                                  ),
-                                );
+          headerSliverBuilder: (BuildContext context, bool a) {
+            return <Widget>[
+              SliverAppBar(
+                expandedHeight: 70,
+                centerTitle: true,
+                actionsIconTheme: IconThemeData(color: Colors.black),
+                leading: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => Navigator.pop(context)),
+                //actions: <Widget>[
+                //],
+                backgroundColor: whitetheme.accentColor,
+                floating: true,
+                pinned: true,
+                title: AppTitle("Archive", "Note"),
+              )
+            ];
+          },
+          body: Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(30))),
+              //padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: StreamBuilder(
+                  stream: archiveStream,
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData)
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    else {
+                      if (snapshot.data.documents.isEmpty) {
+                        return Center(child: Text("Ancora nulla"));
+                      } else
+                        return ListView.builder(
+                          itemCount: snapshot.data.documents.length,
+                          itemBuilder: (context, i) {
+                            final key = snapshot.data.documents[i].documentID;
+                            return Dismissible(
+                              key: UniqueKey(),
+                              background:
+                                  slideToLeft(" Unarchive", Icons.unarchive),
+                              secondaryBackground:
+                                  slideToRight("Delete ", Icons.delete),
+                              onDismissed: (direction) {
+                                if (direction == DismissDirection.endToStart)
+                                  removeNote(key, context, "archive");
+                                else
+                                  unArchiveNote(key, context);
                               },
+                              child: Tiles(Note(
+                                  id: snapshot.data.documents[i].documentID,
+                                  title: snapshot.data.documents[i]['title'],
+                                  color: Color(int.parse(
+                                      snapshot.data.documents[i]['color'])),
+                                  isLocked: snapshot.data.documents[i]
+                                      ["locked"],
+                                  body: snapshot.data.documents[i]['body'])),
                             );
-                          }
-                        }
-                      )),
-                )));
+                          },
+                        );
+                    }
+                  })),
+        )));
   }
 
-  final Stream<QuerySnapshot> archiveStream = Firestore.instance.collection("utenti").document(mainUser.email).collection("archive").snapshots();
-
+  final Stream<QuerySnapshot> archiveStream = Firestore.instance
+      .collection("utenti")
+      .document(mainUser.email)
+      .collection("archive")
+      .snapshots();
 }
