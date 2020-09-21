@@ -11,18 +11,20 @@ import 'package:securenote/theme.dart';
 import 'package:securenote/model/tile.dart';
 import 'package:securenote/view/settings.dart';
 import 'package:securenote/view/splash.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SecureNote',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
+      theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
       home: SplashPage(),
     );
   }
@@ -41,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     //readDocs();
+
     super.initState();
   }
 
@@ -77,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           body: Container(
               decoration: BoxDecoration(
-                  color: whitetheme.backgroundColor,
+                  color: Theme.of(context).canvasColor,
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(30))),
               //padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
