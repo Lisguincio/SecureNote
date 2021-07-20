@@ -50,13 +50,13 @@ class _ArchiveState extends State<Archive> {
                         child: CircularProgressIndicator(),
                       );
                     else {
-                      if (snapshot.data.documents.isEmpty) {
+                      if (snapshot.data.docs.isEmpty) {
                         return Center(child: Text("Ancora nulla"));
                       } else
                         return ListView.builder(
-                          itemCount: snapshot.data.documents.length,
+                          itemCount: snapshot.data.docs.length,
                           itemBuilder: (context, i) {
-                            final key = snapshot.data.documents[i].documentID;
+                            final key = snapshot.data.docs[i].id;
                             return Dismissible(
                               key: UniqueKey(),
                               background:
@@ -70,13 +70,13 @@ class _ArchiveState extends State<Archive> {
                                   unArchiveNote(key, context);
                               },
                               child: Tiles(Note(
-                                  id: snapshot.data.documents[i].documentID,
-                                  title: snapshot.data.documents[i]['title'],
+                                  id: snapshot.data.docs[i].id,
+                                  title: snapshot.data.docs[i]['title'],
                                   color: Color(int.parse(
-                                      snapshot.data.documents[i]['color'])),
-                                  isLocked: snapshot.data.documents[i]
+                                      snapshot.data.docs[i]['color'])),
+                                  isLocked: snapshot.data.docs[i]
                                       ["locked"],
-                                  body: snapshot.data.documents[i]['body'])),
+                                  body: snapshot.data.docs[i]['body'])),
                             );
                           },
                         );
@@ -85,9 +85,9 @@ class _ArchiveState extends State<Archive> {
         )));
   }
 
-  final Stream<QuerySnapshot> archiveStream = Firestore.instance
+  final Stream<QuerySnapshot> archiveStream = FirebaseFirestore.instance
       .collection("utenti")
-      .document(mainUser.email)
+      .doc(mainUser.email)
       .collection("archive")
       .snapshots();
 }

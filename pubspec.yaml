@@ -27,28 +27,21 @@ dependencies:
   flutter_material_color_picker:
 
   shared_preferences:
-  
-  local_auth: ^0.4.0+1
 
-  google_sign_in:
-  firebase_auth:
-  cloud_firestore:
+  local_auth: ^1.1.6
 
-
-  zefyr:
-    git:
-      url: https://github.com/memspace/zefyr.git
-      path: packages/zefyr
+  google_sign_in: ^5.0.5
+  firebase_auth: ^3.0.1
+  cloud_firestore: ^2.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
- 
   flutter_launcher_icons: "^0.7.3"
-  
+
 flutter_icons:
-  android: "launcher_icon" 
+  android: "launcher_icon"
   ios: true
   image_path: "assets/icon/icon.png"
 
@@ -57,7 +50,6 @@ flutter_icons:
 
 # The following section is specific to Flutter.
 flutter:
-
   assets:
     - assets/icon/icon.png
   # The following line ensures that the Material Icons font is

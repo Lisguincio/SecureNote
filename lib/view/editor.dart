@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:securenote/model/note.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
-import 'package:securenote/theme.dart';
 import 'package:toast/toast.dart';
-import 'package:zefyr/zefyr.dart';
+//import 'package:zefyr/zefyr.dart';
 import 'package:flutter/material.dart';
 
 class Editor extends StatefulWidget {
@@ -19,7 +17,7 @@ class Editor extends StatefulWidget {
 }
 
 class _EditorState extends State<Editor> {
-  ZefyrController _controller;
+  //ZefyrController _controller;
   TextEditingController _title;
   bool isEditing = false;
   bool isNew = false;
@@ -39,21 +37,21 @@ class _EditorState extends State<Editor> {
     _title =
         new TextEditingController(); //Inizializzo il nuovo TextEditingController per il titolo
 
-    NotusDocument document; //Inizializzo il nuovo documento
+    //NotusDocument document; //Inizializzo il nuovo documento
 
-    if (!isNew)
-      document = _loadDocument();
+    /* if (!isNew)
+      //document = _loadDocument();
     else
       document = new NotusDocument();
 
-    _controller = ZefyrController(document);
+    _controller = ZefyrController(document); */
 
-    _controller.addListener(() {
+    /* _controller.addListener(() {
       if (isEditing == false) {
         isEditing = true;
         print("Documento modificato!");
       }
-    });
+    }); */
     _title.addListener(() {
       if (isEditing == false) {
         isEditing = true;
@@ -129,14 +127,14 @@ class _EditorState extends State<Editor> {
                   decoration:
                       BoxDecoration(color: Theme.of(context).canvasColor),
                   padding: EdgeInsets.all(10),
-                  child: ZefyrScaffold(
+                  child: null/* ZefyrScaffold(
                     child: ZefyrEditor(
                       autofocus: false,
                       padding: EdgeInsets.all(16),
                       controller: _controller,
                       focusNode: _focusNode,
                     ),
-                  ),
+                  ), */
                 ),
               ),
             ],
@@ -149,13 +147,13 @@ class _EditorState extends State<Editor> {
   void newNote() {
     print("Nuova nota - Aggiungo!");
     try {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection("utenti")
-          .document(mainUser.email)
+          .doc(mainUser.email)
           .collection("note")
           .add({
         'title': _title.text,
-        'body': jsonEncode(_controller.document),
+        /* 'body': jsonEncode(_controller.document), */
         'locked': widget.note.isLocked,
         'color': widget.note.color.value.toString()
       });
@@ -167,15 +165,15 @@ class _EditorState extends State<Editor> {
   void _saveDocument(BuildContext context) {
     print("Nota modificata, Aggiorno!");
     FocusScope.of(context).requestFocus(FocusNode()); //Chiude la tastiera
-    final contents =
-        jsonEncode(_controller.document); //Codifica il contenuto del corpo
+    final contents = null;
+        /* jsonEncode(_controller.document); //Codifica il contenuto del corpo */
     try {
-      Firestore.instance
+            FirebaseFirestore.instance
           .collection("utenti")
-          .document(mainUser.email) //?
+          .doc(mainUser.email) //?
           .collection("note")
-          .document(widget.note.id)
-          .updateData({
+          .doc(widget.note.id)
+          .update({
         'title': _title.text,
         'body': contents,
         'locked': widget.note.isLocked,
@@ -187,12 +185,12 @@ class _EditorState extends State<Editor> {
     }
   }
 
-  NotusDocument _loadDocument() {
+  /* NotusDocument _loadDocument() {
     _title = new TextEditingController(text: widget.note.title);
     if (widget.note.body == null) return NotusDocument();
     List data = json.decode(widget.note.body);
     return NotusDocument.fromJson(data);
-  }
+  } */
 
   void done() {
     try {
@@ -230,7 +228,7 @@ class _EditorState extends State<Editor> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     setState(() {
                       widget.note.color = Color.fromRGBO(
@@ -257,10 +255,10 @@ class _EditorState extends State<Editor> {
             content: Text(
                 "Sicuro di voler tornare indietro? I cambiamenti effettuati non verrano salvati!"),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   onPressed: () => Navigator.pop(context, false),
                   child: Text("No, Grazie")),
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },

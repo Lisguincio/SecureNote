@@ -126,14 +126,9 @@ class _LoginState extends State<Login> {
                                   }
                                 }),
                           ]),
-                      OutlineButton(
-                          splashColor: Colors.grey,
+                      OutlinedButton(
                           onPressed: () =>
                               Toast.show("Ancora non implementato", context),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40)),
-                          highlightElevation: 0,
-                          borderSide: BorderSide(color: Colors.grey),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                             child: Text(
@@ -190,7 +185,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> autenticate(email, password, context) async {
-    AuthResult result;
+    UserCredential result;
     try {
       FocusScope.of(context).requestFocus(FocusNode());
       print("Email: " + email);
@@ -199,7 +194,7 @@ class _LoginState extends State<Login> {
       result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       Toast.show("Login Success!", context);
-      if (result.user.isEmailVerified) {
+      if (result.user.emailVerified) {
         mainUser = result.user;
         final prefs = await SharedPreferences.getInstance();
         prefs.setString("rememberEmail", _email.text);

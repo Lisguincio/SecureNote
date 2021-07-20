@@ -130,12 +130,12 @@ class _SettingsState extends State<Settings> {
         return AlertDialog(
           content: Text("Sicuro di voler uscire da questo account?"),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   Navigator.pop(context, true);
                 },
                 child: Text("Si, voglio uscire")),
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   Navigator.pop(context, false);
                 },

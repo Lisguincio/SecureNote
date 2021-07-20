@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:securenote/view/settings.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toast/toast.dart';
 
-List<BiometricType> btype = new List();
+List<BiometricType> btype = [];
 
 class LocalAuthenticationService {
   var context;
@@ -29,7 +26,7 @@ class LocalAuthenticationService {
   }
 
   Future<bool> biometricAuth()async{
-    return await _auth.authenticateWithBiometrics(
+    return await _auth.authenticate(
       localizedReason: "Sblocca per accedere alla nota", 
       useErrorDialogs: false);
   }

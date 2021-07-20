@@ -24,18 +24,29 @@ class _SplashPageState extends State<SplashPage> {
     initPrefs();
     LocalAuthenticationService(context).loadtypes();
 
-    FirebaseAuth.instance.currentUser().then((currentUser) {
-      if (currentUser == null) {
-        Navigator.pushReplacement(
+    mainUser = FirebaseAuth.instance.currentUser;
+    if(mainUser == null){
+       Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Login()));
-      } 
+      
+    }
+    else{
+      Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => MyHomePage()))
+            .catchError((err) => print(err));
+    }
+    /* FirebaseAuth.instance.currentUser().then((currentUser) {
+      if (currentUser == null) {
+         Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Login()));
+       } 
       else {
         mainUser = currentUser;
         Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => MyHomePage()))
             .catchError((err) => print(err));
       }
-    }).catchError((err) => print(err));
+    }).catchError((err) => print(err)); */
     super.initState();
   }
 

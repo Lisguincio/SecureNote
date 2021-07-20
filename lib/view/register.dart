@@ -145,7 +145,7 @@ class _RegisterState extends State<Register> {
   }
 
   Future<void>register(username, email, password, context)async{
-    FirebaseUser user;
+    User user;
     try {
       FocusScope.of(context).requestFocus(FocusNode());
       print("Username" + username);

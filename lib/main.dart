@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:securenote/model/title.dart';
 import 'package:securenote/model/user.dart';
+import 'package:securenote/view/settings.dart' as ViewSettings;
 
-import 'package:securenote/view/editor.dart';
-import 'package:securenote/model/note.dart';
-import 'package:securenote/theme.dart';
-import 'package:securenote/model/tile.dart';
-import 'package:securenote/view/settings.dart';
-import 'package:securenote/view/splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toast/toast.dart';
+import '/view/editor.dart';
+import '/model/note.dart';
+import '/theme.dart';
+import '/model/tile.dart';
+import '/view/splash.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SecureNote',
       debugShowCheckedModeBanner: false,
-      theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
+      theme: ViewSettings.darkTheme ? ThemeData.dark() : ThemeData.light(),
       home: SplashPage(),
     );
   }
@@ -33,7 +31,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
-  final FirebaseUser user = mainUser;
+  final User user = mainUser;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -92,13 +90,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: CircularProgressIndicator(),
                       );
                     else {
-                      if (snapshot.data.documents.isEmpty) {
+                      if (snapshot.data.docs.isEmpty) {
                         return Center(child: Text("Ancora nulla"));
                       } else
                         return ListView.builder(
-                          itemCount: snapshot.data.documents.length,
+                          itemCount: snapshot.data.docs.length,
                           itemBuilder: (context, i) {
-                            final key = snapshot.data.documents[i].documentID;
+                            final key = snapshot.data.docs[i].id;
                             return Dismissible(
                               key: UniqueKey(),
                               background:
@@ -112,13 +110,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                   archiveNote(key, context);
                               },
                               child: Tiles(Note(
-                                  id: snapshot.data.documents[i].documentID,
-                                  title: snapshot.data.documents[i]['title'],
+                                  id: snapshot.data.docs[i].id,
+                                  title: snapshot.data.docs[i]['title'],
                                   color: Color(int.parse(
-                                      snapshot.data.documents[i]['color'])),
-                                  isLocked: snapshot.data.documents[i]
+                                      snapshot.data.docs[i]['color'])),
+                                  isLocked: snapshot.data.docs[i]
                                       ["locked"],
-                                  body: snapshot.data.documents[i]['body'])),
+                                  body: snapshot.data.docs[i]['body'])),
                             );
                           },
                         );
@@ -134,12 +132,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void navSetting() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Settings()));
+        context, MaterialPageRoute(builder: (context) => ViewSettings.Settings()));
   }
 
-  final Stream<QuerySnapshot> mainStream = Firestore.instance
+  final Stream<QuerySnapshot> mainStream = FirebaseFirestore.instance
       .collection("utenti")
-      .document(mainUser.email)
+      .doc(mainUser.email)
       .collection("note")
       .snapshots();
 

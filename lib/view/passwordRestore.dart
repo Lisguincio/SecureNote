@@ -97,7 +97,7 @@ class _PasswordRestoreState extends State<PasswordRestore> {
   }
 
   Future<void>recover(email, context)async{
-    FirebaseUser user;
+    User user;
     try {
       FocusScope.of(context).requestFocus(FocusNode());
       
